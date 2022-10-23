@@ -28,3 +28,36 @@ exports.createTeam = asyncHandler(async (req, res, next) => {
         data: team,
     });
 });
+
+exports.addMember = asyncHandler(async (req, res, next) => {
+    const memberId  = req.body;
+    const event = await Event.find({ eventId: req.params.event });
+    if (!event) {
+        return next(new AppError("Event Does Not Exist", 404));
+    }
+
+    const team = await Team.find({ teamId: req.params.team });
+    if (!event) {
+        return next(new AppError("Team Does Not Exist", 404));
+    }
+
+    const member = await User.findById(memberId);
+    if (!member) {
+        return next(new AppError("Participant Does Not Exist", 404));
+    }
+
+    Team.forEach(team => {
+        if (team.leader == member) {
+            return next(new AppError("Participant Already Part Of Another Team", 404));
+        }
+
+        team.participants.forEach(participant => {
+            if (participant == member) {
+                return next(new AppError("Participant Already Part Of Another Team", 404));
+            }
+        });
+    });
+
+    team.participants.push(memberId);
+    await team.save();
+});
