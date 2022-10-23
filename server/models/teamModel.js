@@ -24,6 +24,10 @@ const teamSchema = new mongoose.Schema({
             ref: "User",
         },
     ],
+    leader : {
+        type: mongoose.Schema.ObjectId,
+        ref: "User",
+    }
 });
 
 teamSchema.pre(/^find/, function (next) {
