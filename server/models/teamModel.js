@@ -9,14 +9,12 @@ const teamSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
+    teamName: {
+        type: String,
+    },
     round: {
         type: String,
         default: "1",
-    },
-    isTeam: {
-        type: Boolean,
-        required: true,
-        default: true,
     },
     participants: [
         {
@@ -27,7 +25,8 @@ const teamSchema = new mongoose.Schema({
     leader : {
         type: mongoose.Schema.ObjectId,
         ref: "User",
-    }
+    },
+    avatar: String
 });
 
 teamSchema.pre(/^find/, function (next) {

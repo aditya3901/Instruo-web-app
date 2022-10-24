@@ -15,6 +15,14 @@ const eventSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  types: {
+    type: String,
+    enum: {
+      values: ["team", "individual"],
+      message: "Not a valid type",
+    },
+    default: "individual",
+  },
   desc: {
     type: String,
     required: true,

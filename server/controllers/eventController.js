@@ -4,6 +4,16 @@ const AppError = require("../utils/appError");
 const Event = require("../models/eventModel");
 const User = require("../models/userModel");
 
+exports.restrictTo = 
+  (...types) => 
+  (req, res, next) => {
+    if (types.includes(req.event.types)) return next();
+
+    return next(
+      new AppError("You don't have permission to perform this action.", 403)
+    );
+  };
+
 exports.registerForEvent = asyncHandler(async (req, res, next) => {
   const { eventId, participantId } = req.body;
   const event = await Event.find({ eventId: eventId });
