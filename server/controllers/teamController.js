@@ -5,13 +5,7 @@ const Event = require("../models/eventModel");
 const User = require("../models/userModel");
 
 exports.getAllTeamsByEvent = asyncHandler(async (req, res, next) => {
-    const eventId = req.params.eventId;
-    const event = await Event.find({ eventId: eventId });
-    if (!event) {
-        return next(new AppError("Event Does Not Exist", 404));
-    }
-
-    const teams = await Team.find({ eventId: eventId });
+    const teams = await Team.find({ eventId: req.event.eventId });
     
     res.status(200).json({
         status: "success",
@@ -29,12 +23,7 @@ exports.getAllTeams = asyncHandler(async (req, res, next) => {
 });
 
 exports.registerIndividual = asyncHandler(async (req, res, next) => {
-    const event = await Event.find({ eventId: req.params.event });
-    if (!event) {
-        return next(new AppError("Event Does Not Exist", 404));
-    }
-
-    const participant = await User.findById(req.params.participant);
+    const participant = await User.findById(req.params.participantId);
     if (!participant) {
         return next(new AppError("Participant Does Not Exist", 404));
     }
@@ -55,12 +44,7 @@ exports.registerIndividual = asyncHandler(async (req, res, next) => {
 });
 
 exports.createTeam = asyncHandler(async (req, res, next) => {
-    const event = await Event.find({ eventId: req.params.event });
-    if (!event) {
-        return next(new AppError("Event Does Not Exist", 404));
-    }
-
-    const leader = await User.findById(req.params.leader);
+    const leader = await User.findById(req.params.leaderId);
     if (!leader) {
         return next(new AppError("Participant Does Not Exist", 404));
     }
@@ -96,18 +80,18 @@ exports.createTeam = asyncHandler(async (req, res, next) => {
     });
 });
 
-exports.addMember = asyncHandler(async (req, res, next) => {
-    const memberId  = req.body.member;
-    const event = await Event.find({ eventId: req.params.event });
-    if (!event) {
-        return next(new AppError("Event Does Not Exist", 404));
-    }
-
-    const team = await Team.find({ teamId: req.params.team });
+exports.populateTeam = asyncHandler(async (req, res, next) => {
+    const team = await Team.findById(req.params.teamId);
     if (!team) {
         return next(new AppError("Team Does Not Exist", 404));
     }
+    
+    req.team = team;
+    next();
+})
 
+exports.addMember = asyncHandler(async (req, res, next) => {
+    const memberId = req.body.memberId;
     const member = await User.findById(memberId);
     if (!member) {
         return next(new AppError("Participant Does Not Exist", 404));
@@ -125,8 +109,8 @@ exports.addMember = asyncHandler(async (req, res, next) => {
         });
     });
 
-    team.participants.push(memberId);
-    team.save();
+    req.team.participants.push(memberId);
+    req.team.save();
 
     res.status(201).json({
         status: "success",
@@ -135,14 +119,9 @@ exports.addMember = asyncHandler(async (req, res, next) => {
 });
 
 exports.promoteTeam = asyncHandler(async (req, res, next) => {
-    const team = await Team.find({ teamId: req.params.team });
-    if (!team) {
-        return next(new AppError("Team Does Not Exist", 404));
-    }
-
     const round = req.body.round;
-    team.round = round;
-    team.save();
+    req.team.round = round;
+    req.team.save();
 
     res.status(201).json({
         status: "success",
@@ -151,18 +130,14 @@ exports.promoteTeam = asyncHandler(async (req, res, next) => {
 });
 
 exports.updateTeam = asyncHandler(async (req, res, next) => {
-    const team = await Team.findOneAndUpdate(
-        { teamId: req.params.team },
-        req.body,
+    const team = await Team.findByIdAndUpdate(
+        req.params.teamId, 
+        req.body, 
         {
             new: true,
-            runValidators: true,
+            runValidators: true
         }
     );
-
-    if (!team) {
-        return next(new AppError("Team Does Not Exist", 404));
-    }
   
     res.status(201).json({
         status: "success",

@@ -6,16 +6,17 @@ const teamController = require("../controllers/teamController");
 const router = express.Router();
 
 router.get("/", teamController.getAllTeams);
-router.get("/:eventId", teamController.getAllTeamsByEvent);
+router.get("/:eventId", eventController.populateEvent, teamController.getAllTeamsByEvent);
 
 router.use(authController.protect);
-router.post("/register/:event/:participant", teamController.registerIndividual);
+router.post("/register/:eventId/:participantId", eventController.populateEvent, teamController.registerIndividual);
 
-router.post("/createTeam/:event/:leader", eventController.restrictTo("team"), teamController.createTeam);
-router.put("/addMember/:event/:team", eventController.restrictTo("team"), teamController.addMember);
+router.post("/createTeam/:eventId/:leaderId", eventController.populateEvent, eventController.restrictTo("team"), teamController.createTeam);
+router.put("/addMember/:eventId/:teamId", eventController.populateEvent, eventController.restrictTo("team"), teamController.populateTeam, teamController.addMember);
 
 router.use(authController.restrictTo("admin"));
-router.patch("/promote/:team", teamController.promoteTeam);
-router.patch("/update/:team", teamController.updateTeam);
+router.use(teamController.populateTeam);
+router.patch("/promote/:teamId", teamController.promoteTeam);
+router.patch("/update/:teamId", teamController.updateTeam);
 
 module.exports = router;

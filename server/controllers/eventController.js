@@ -4,6 +4,16 @@ const AppError = require("../utils/appError");
 const Event = require("../models/eventModel");
 const User = require("../models/userModel");
 
+exports.populateEvent = asyncHandler(async (req, res, next) => {
+  const event = await Event.find({ eventId: req.params.eventId });
+  if (!event) {
+      return next(new AppError("Event Does Not Exist", 404));
+  }
+
+  req.event = event;
+  next();
+});
+
 exports.restrictTo = 
   (...types) => 
   (req, res, next) => {

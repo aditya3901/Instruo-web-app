@@ -1,13 +1,10 @@
 const mongoose = require("mongoose");
 
 const teamSchema = new mongoose.Schema({
-    teamId: {
-        type: String,
-        unique: true,
-    },
     eventId: {
-        type: String,
         required: true,
+        type: mongoose.Schema.ObjectId,
+        ref: "Event",
     },
     teamName: {
         type: String,
@@ -16,13 +13,13 @@ const teamSchema = new mongoose.Schema({
         type: String,
         default: "1",
     },
-    participants: [
+    participantIds: [
         {
             type: mongoose.Schema.ObjectId,
             ref: "User",
         },
     ],
-    leader : {
+    leaderId : {
         type: mongoose.Schema.ObjectId,
         ref: "User",
     },
@@ -31,9 +28,16 @@ const teamSchema = new mongoose.Schema({
 
 teamSchema.pre(/^find/, function (next) {
     this.populate({
-      path: "participants",
-      select: "-__v -events",
+      path: "participantIds",
     });
+    
+    this.populate({
+        path: "leaderId",
+    })
+
+    this.populate({
+        path: "eventId",
+    })
   
     next();
 });
