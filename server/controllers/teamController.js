@@ -4,6 +4,30 @@ const Team = require("../models/teamModel");
 const Event = require("../models/eventModel");
 const User = require("../models/userModel");
 
+exports.getAllTeamsByEvent = asyncHandler(async (req, res, next) => {
+    const eventId = req.params.eventId;
+    const event = await Event.find({ eventId: eventId });
+    if (!event) {
+        return next(new AppError("Event Does Not Exist", 404));
+    }
+
+    const teams = await Team.find({ eventId: eventId });
+    
+    res.status(200).json({
+        status: "success",
+        teams,
+    });
+});
+
+exports.getAllTeams = asyncHandler(async (req, res, next) => {
+    const teams = await Team.find({});
+    
+    res.status(200).json({
+        status: "success",
+        teams,
+    });
+});
+
 exports.registerIndividual = asyncHandler(async (req, res, next) => {
     const event = await Event.find({ eventId: req.params.event });
     if (!event) {
@@ -73,13 +97,13 @@ exports.createTeam = asyncHandler(async (req, res, next) => {
 });
 
 exports.addMember = asyncHandler(async (req, res, next) => {
-    const memberId  = req.body;
+    const memberId  = req.body.member;
     const event = await Event.find({ eventId: req.params.event });
     if (!event) {
         return next(new AppError("Event Does Not Exist", 404));
     }
 
-    const team = await Team.find({ teamId: req.params.teamId });
+    const team = await Team.find({ teamId: req.params.team });
     if (!team) {
         return next(new AppError("Team Does Not Exist", 404));
     }
@@ -111,7 +135,7 @@ exports.addMember = asyncHandler(async (req, res, next) => {
 });
 
 exports.promoteTeam = asyncHandler(async (req, res, next) => {
-    const team = await Team.find({ teamId: req.params.teamId });
+    const team = await Team.find({ teamId: req.params.team });
     if (!team) {
         return next(new AppError("Team Does Not Exist", 404));
     }
@@ -123,5 +147,25 @@ exports.promoteTeam = asyncHandler(async (req, res, next) => {
     res.status(201).json({
         status: "success",
         message: "Promotion Successful",
+    });
+});
+
+exports.updateTeam = asyncHandler(async (req, res, next) => {
+    const team = await Team.findOneAndUpdate(
+        { teamId: req.params.team },
+        req.body,
+        {
+            new: true,
+            runValidators: true,
+        }
+    );
+
+    if (!team) {
+        return next(new AppError("Team Does Not Exist", 404));
+    }
+  
+    res.status(201).json({
+        status: "success",
+        data: team,
     });
 });
