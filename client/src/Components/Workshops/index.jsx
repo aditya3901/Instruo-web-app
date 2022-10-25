@@ -1,21 +1,21 @@
 import { React, useState, useEffect } from "react";
+import WorkshopCard from "./WorkshopCard";
 import HeroSection from "../Shared/HeroSection";
-import EventCard from "./EventCard";
 import { Sugar } from "react-preloaders";
 import axios from "axios";
 
-const Events = () => {
-  const [events, getEvents] = useState();
+const Workshops = () => {
+  const [workshops, getWorkshops] = useState();
   const [loading, setLoading] = useState(true);
   useEffect(() => {
     axios
-      .get("http://localhost:3000/api/v1/events ", {
+      .get("http://localhost:3000/api/v1/workshops ", {
         headers: {
           Accept: "application/json",
         },
       })
       .then((res) => {
-        getEvents(res.data.events);
+        getWorkshops(res.data.workshops);
         setLoading(false);
       });
   }, []);
@@ -24,7 +24,7 @@ const Events = () => {
       {!loading && (
         <div>
           <HeroSection
-            title={"Events"}
+            title={"Workshops"}
             desc={
               "Lorem ipsum, dolor sit amet consectetur adipisicing elit. Ratione, ullam?"
             }
@@ -34,14 +34,14 @@ const Events = () => {
                 url: "/",
               },
               {
-                title: "Events",
+                title: "Workshops",
                 url: "",
               },
             ]}
           />
-          <div className="p-10 py-32 flex flex-wrap gap-10 justify-center">
-            {events.map((event, i) => (
-              <EventCard key={i} {...event} />
+          <div className="p-10 mt-32 mb-32 flex flex-wrap gap-10 justify-center">
+            {workshops.map((workshop, i) => (
+              <WorkshopCard key={i} {...workshop} />
             ))}
           </div>
         </div>
@@ -57,4 +57,4 @@ const Events = () => {
   );
 };
 
-export default Events;
+export default Workshops;

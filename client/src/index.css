@@ -16,14 +16,18 @@
 }
 
 ::-webkit-scrollbar {
-	color: black;
+	background: --var();
 	width: 6px;
 	height: 6px;
 }
 
 ::-webkit-scrollbar-thumb {
-	color: white;
-	border-radius: 15px;
+	background: grey;
+	border-radius: 12px;
+}
+
+::-webkit-scrollbar-track {
+	display: none;
 }
 
 @tailwind base;

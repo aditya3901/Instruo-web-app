@@ -4,7 +4,7 @@ import SponsorCard from "./SponsorCard";
 const SponsorSection = ({ title, bg }) => {
   return (
     <div
-      className={`hero bg-base-${bg} text-base-content mx-auto min-h-screen max-w-md max-w-full`}
+      className={`hero bg-base-${bg} text-base-content mx-auto min-h-screen max-w-full`}
     >
       <div className="hero-content px-4 md:px-2 text-center flex flex-col">
         <div>

@@ -124,7 +124,7 @@ exports.getAllEvents = asyncHandler(async (req, res, next) => {
 });
 
 exports.getEventById = asyncHandler(async (req, res, next) => {
-  const event = await Event.find({ eventId: req.params.id });
+  const event = await Event.findOne({ eventId: req.params.id });
 
   if (!event) {
     return next(new AppError("Event Does Not Exist", 404));

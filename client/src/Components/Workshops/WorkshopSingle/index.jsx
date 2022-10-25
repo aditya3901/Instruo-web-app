@@ -1,21 +1,22 @@
 import { React, useState, useEffect } from "react";
-import HeroSection from "../Shared/HeroSection";
-import EventCard from "./EventCard";
-import { Sugar } from "react-preloaders";
+import Register from "./Register";
+import WorkshopDetails from "./WorkshopDetails";
+import HeroSection from "../../Shared/HeroSection";
 import axios from "axios";
+import { Sugar } from "react-preloaders";
 
-const Events = () => {
-  const [events, getEvents] = useState();
+const WorkshopSingle = ({ workshopId }) => {
+  const [workshop, getWorkshop] = useState();
   const [loading, setLoading] = useState(true);
   useEffect(() => {
     axios
-      .get("http://localhost:3000/api/v1/events ", {
+      .get(`http://localhost:3000/api/v1/workshops/${workshopId}`, {
         headers: {
           Accept: "application/json",
         },
       })
       .then((res) => {
-        getEvents(res.data.events);
+        getWorkshop(res.data.data.workshop);
         setLoading(false);
       });
   }, []);
@@ -24,26 +25,25 @@ const Events = () => {
       {!loading && (
         <div>
           <HeroSection
-            title={"Events"}
-            desc={
-              "Lorem ipsum, dolor sit amet consectetur adipisicing elit. Ratione, ullam?"
-            }
+            title={workshop.title}
+            desc={workshop.subtitle}
             breadParams={[
               {
                 title: "Instruo",
                 url: "/",
               },
               {
-                title: "Events",
+                title: "Workshop",
+                url: "/workshops",
+              },
+              {
+                title: workshop.title,
                 url: "",
               },
             ]}
           />
-          <div className="p-10 py-32 flex flex-wrap gap-10 justify-center">
-            {events.map((event, i) => (
-              <EventCard key={i} {...event} />
-            ))}
-          </div>
+          <WorkshopDetails {...workshop} />
+          <Register />
         </div>
       )}
       <Sugar
@@ -57,4 +57,4 @@ const Events = () => {
   );
 };
 
-export default Events;
+export default WorkshopSingle;

@@ -10,6 +10,16 @@ const Hero = () => {
 				desc={
 					"Lorem ipsum, dolor sit amet consectetur adipisicing elit. Ratione, ullam?"
 				}
+				breadParams={[
+					{
+						title: "Instruo",
+						url: "/",
+					},
+					{
+						title: "Sponsors",
+						url: "",
+					},
+				]}
 			/>
 		</>
 	)

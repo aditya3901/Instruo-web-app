@@ -27,11 +27,11 @@ export const angleVector = (angle, distance) => {
 
 const Wind = ({ bearing }) => {
 	// create the particle variables
-	const particleCount = 1000
-	const particleSize = 0.01
+	const particleCount = 1200
+	const particleSize = 0.05
 	const particleTrailSize = 30
 	const particleTrailGap = 0.05
-	const particleSpeed = 0.04
+	const particleSpeed = 0.05
 	const particleDepth = 8
 	const scale = 20
 
@@ -66,7 +66,10 @@ const Wind = ({ bearing }) => {
 	const geometry = new BufferGeometry()
 	geometry.dynamic = true
 	geometry.setAttribute("position", new Float32BufferAttribute(particles, 3))
-	const material = new PointsMaterial({ color: "white", size: particleSize })
+	const material = new PointsMaterial({
+		color: "#FF7700",
+		size: particleSize,
+	})
 
 	useFrame(() => {
 		const particles = geometry.attributes.position.array
