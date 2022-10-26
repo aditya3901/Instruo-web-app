@@ -24,12 +24,11 @@ exports.getAllTeams = asyncHandler(async (req, res, next) => {
 
 exports.registerIndividual = asyncHandler(async (req, res, next) => {
     const participant = await User.findById(req.params.participantId);
-    if (!participant) {
-        return next(new AppError("Participant Does Not Exist", 404));
-    }
 
-    Team.forEach(team => {
-        if (team.leader == participant) {
+    const teams = await Team.find({});
+
+    teams.forEach(team => {
+        if (team.leaderId == participant) {
             return next(new AppError("Participant Already Registered", 409));
         }
     });
@@ -45,25 +44,24 @@ exports.registerIndividual = asyncHandler(async (req, res, next) => {
 
 exports.createTeam = asyncHandler(async (req, res, next) => {
     const leader = await User.findById(req.params.leaderId);
-    if (!leader) {
-        return next(new AppError("Participant Does Not Exist", 404));
-    }
 
-    Team.forEach(team => {
-        if (team.leader == leader) {
+    const teams = await Team.find({});
+
+    teams.forEach(team => {
+        if (team.leaderId == leader) {
             return next(new AppError("Participant Already Leader Of Another Team", 409));
         }
 
-        team.participants.forEach(participant => {
+        team.participantIds.forEach(participant => {
             if (participant == leader) {
                 return next(new AppError("Participant Already Member Of Another Team", 409));
             }
         });
     });
 
-    const { name, avatar } = req.body;
+    const { teamName, avatar } = req.body;
     
-    if (!name) {
+    if (!teamName) {
         return next(new AppError("Team Name Required", 400));
     }
 
@@ -93,23 +91,21 @@ exports.populateTeam = asyncHandler(async (req, res, next) => {
 exports.addMember = asyncHandler(async (req, res, next) => {
     const memberId = req.body.memberId;
     const member = await User.findById(memberId);
-    if (!member) {
-        return next(new AppError("Participant Does Not Exist", 404));
-    }
 
-    Team.forEach(team => {
-        if (team.leader == member) {
+    const teams = await Team.find({});
+    teams.forEach(team => {
+        if (team.leaderId == member) {
             return next(new AppError("Participant Already Leader Of Another Team", 409));
         }
 
-        team.participants.forEach(participant => {
+        team.participantIds.forEach(participant => {
             if (participant == member) {
                 return next(new AppError("Participant Already Member Of Another Team", 409));
             }
         });
     });
 
-    req.team.participants.push(memberId);
+    req.team.participantIds.push(memberId);
     req.team.save();
 
     res.status(201).json({

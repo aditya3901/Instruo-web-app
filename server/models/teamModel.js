@@ -3,8 +3,7 @@ const mongoose = require("mongoose");
 const teamSchema = new mongoose.Schema({
     eventId: {
         required: true,
-        type: mongoose.Schema.ObjectId,
-        ref: "Event",
+        type: String,
     },
     teamName: {
         type: String,
@@ -20,6 +19,7 @@ const teamSchema = new mongoose.Schema({
         },
     ],
     leaderId : {
+        required: true,
         type: mongoose.Schema.ObjectId,
         ref: "User",
     },
@@ -28,17 +28,17 @@ const teamSchema = new mongoose.Schema({
 
 teamSchema.pre(/^find/, function (next) {
     this.populate({
-      path: "participantIds",
+        path: "participantIds",
+        select:
+            "-__v -events -passwordChangedAt -passwordResetToken -passwordResetExpired",
     });
     
     this.populate({
         path: "leaderId",
-    })
+        select:
+            "-__v -events -passwordChangedAt -passwordResetToken -passwordResetExpired",
+    });
 
-    this.populate({
-        path: "eventId",
-    })
-  
     next();
 });
 

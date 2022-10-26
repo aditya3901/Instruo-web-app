@@ -15,8 +15,7 @@ router.post("/createTeam/:eventId/:leaderId", eventController.populateEvent, eve
 router.put("/addMember/:eventId/:teamId", eventController.populateEvent, eventController.restrictTo("team"), teamController.populateTeam, teamController.addMember);
 
 router.use(authController.restrictTo("admin"));
-router.use(teamController.populateTeam);
-router.patch("/promote/:teamId", teamController.promoteTeam);
-router.patch("/update/:teamId", teamController.updateTeam);
+router.patch("/promote/:teamId", teamController.populateTeam, teamController.promoteTeam);
+router.patch("/update/:teamId", teamController.populateTeam, teamController.updateTeam);
 
 module.exports = router;
