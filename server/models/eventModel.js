@@ -15,6 +15,14 @@ const eventSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  type: {
+    type: String,
+    enum: {
+      values: ["team", "individual"],
+      message: "Not a valid type",
+    },
+    default: "individual",
+  },
   desc: {
     type: String,
     required: true,
@@ -58,28 +66,28 @@ const eventSchema = new mongoose.Schema({
       answer: String,
     },
   ],
-  participants: [
-    {
-      type: mongoose.Schema.ObjectId,
-      ref: "User",
-    },
-  ],
-  teams: [
-    {
-      teamId: {
-        type: String,
-        unique: true,
-      },
-      teamName: String,
-      college: String,
-      participants: [
-        {
-          type: mongoose.Schema.ObjectId,
-          ref: "User",
-        },
-      ],
-    },
-  ],
+  // participants: [
+  //   {
+  //     type: mongoose.Schema.ObjectId,
+  //     ref: "User",
+  //   },
+  // ],
+  // teams: [
+  //   {
+  //     teamId: {
+  //       type: String,
+  //       unique: true,
+  //     },
+  //     teamName: String,
+  //     college: String,
+  //     participants: [
+  //       {
+  //         type: mongoose.Schema.ObjectId,
+  //         ref: "User",
+  //       },
+  //     ],
+  //   },
+  // ],
 });
 
 eventSchema.pre("save", function (next) {
@@ -87,21 +95,21 @@ eventSchema.pre("save", function (next) {
   next();
 });
 
-eventSchema.pre(/^find/, function (next) {
-  this.populate({
-    path: "participants",
-    select:
-      "-__v -events -passwordChangedAt -passwordResetToken -passwordResetExpired",
-  });
+// eventSchema.pre(/^find/, function (next) {
+//   this.populate({
+//     path: "participants",
+//     select:
+//       "-__v -events -passwordChangedAt -passwordResetToken -passwordResetExpired",
+//   });
 
-  this.populate({
-    path: "teams.participants",
-    select:
-      "-__v -events -passwordChangedAt -passwordResetToken -passwordResetExpired",
-  });
+//   this.populate({
+//     path: "teams.participants",
+//     select:
+//       "-__v -events -passwordChangedAt -passwordResetToken -passwordResetExpired",
+//   });
 
-  next();
-});
+//   next();
+// });
 
 const Event = mongoose.model("Event", eventSchema);
 
