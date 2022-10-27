@@ -24,36 +24,44 @@ exports.getAllTeams = asyncHandler(async (req, res, next) => {
 
 exports.registerIndividual = asyncHandler(async (req, res, next) => {
     const participant = await User.findById(req.params.participantId);
+    const eventId = req.params.eventId;
+    var canRegister = true;
 
     const teams = await Team.find({});
 
     teams.forEach(team => {
-        if (team.leaderId == participant) {
+        if (team.leaderId.id == participant.id && team.eventId == eventId) {
+            canRegister = false;
             return next(new AppError("Participant Already Registered", 409));
         }
     });
 
-    const team = await Team.create(req.body);
+    if (canRegister) {
+        const team = await Team.create(req.body);
     
-    res.status(201).json({
-        status: "success",
-        data: team,
-        message: "Registration Successful",
-    });
+        res.status(201).json({
+            status: "success",
+            data: team,
+            message: "Registration Successful",
+        });
+    }
 });
 
 exports.createTeam = asyncHandler(async (req, res, next) => {
     const leader = await User.findById(req.params.leaderId);
-
+    const eventId = req.params.eventId;
+    var canCreate = true;
     const teams = await Team.find({});
 
     teams.forEach(team => {
-        if (team.leaderId == leader) {
+        if (team.leaderId.id == leader.id && team.eventId == eventId) {
+            canCreate = false;
             return next(new AppError("Participant Already Leader Of Another Team", 409));
         }
 
         team.participantIds.forEach(participant => {
-            if (participant == leader) {
+            if (participant.id == leader.id && team.eventId == eventId) {
+                canCreate = false;
                 return next(new AppError("Participant Already Member Of Another Team", 409));
             }
         });
@@ -62,20 +70,26 @@ exports.createTeam = asyncHandler(async (req, res, next) => {
     const { teamName, avatar } = req.body;
     
     if (!teamName) {
+        canCreate = false;
         return next(new AppError("Team Name Required", 400));
     }
 
     if (!avatar) {
+        canCreate = false;
         return next(new AppError("Team Avatar Required", 400));
     }
     
-    const team = await Team.create(req.body);
+    if (canCreate) {
+        const team = await Team.create(req.body);
+        res.status(201).json({
+            status: "success",
+            data: team,
+            message: "Registration Successful"
+        });
+    }
     
-    res.status(201).json({
-        status: "success",
-        data: team,
-        message: "Registration Successful"
-    });
+    
+    
 });
 
 exports.populateTeam = asyncHandler(async (req, res, next) => {
@@ -91,22 +105,28 @@ exports.populateTeam = asyncHandler(async (req, res, next) => {
 exports.addMember = asyncHandler(async (req, res, next) => {
     const memberId = req.body.memberId;
     const member = await User.findById(memberId);
-
+    var canAdd = true;
     const teams = await Team.find({});
     teams.forEach(team => {
-        if (team.leaderId == member) {
+        if (team.leaderId.id == member.id) {
+            canAdd = false;
             return next(new AppError("Participant Already Leader Of Another Team", 409));
         }
 
-        team.participantIds.forEach(participant => {
-            if (participant == member) {
+        const participantIds = team.participantIds;
+        console.log(participantIds);
+        team.participantIds.every(participant => {
+            canAdd = false;
+            if (participant.id == member.id) {
                 return next(new AppError("Participant Already Member Of Another Team", 409));
             }
         });
     });
 
-    req.team.participantIds.push(memberId);
-    req.team.save();
+    if (canAdd) {
+        req.team.participantIds.push(memberId);
+        req.team.save();
+    }
 
     res.status(201).json({
         status: "success",
