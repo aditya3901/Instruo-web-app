@@ -3,30 +3,11 @@ const { uuid } = require("uuidv4");
 const AppError = require("../utils/appError");
 const Event = require("../models/eventModel");
 const User = require("../models/userModel");
-
-exports.populateEvent = asyncHandler(async (req, res, next) => {
-  const event = await Event.findOne({ eventId: req.params.eventId });
-  if (!event) {
-      return next(new AppError("Event Does Not Exist", 404));
-  }
-
-  req.event = event;
-  next();
-});
-
-exports.restrictTo = 
-  (...types) => 
-  (req, res, next) => {
-    if (types.includes(req.event.type)) return next();
-    
-    return next(
-      new AppError("You don't have permission to perform this action.", 403)
-    );
-  };
+const Team = require("../models/teamModel");
 
 exports.registerForEvent = asyncHandler(async (req, res, next) => {
   const { eventId, participantId } = req.body;
-  const event = await Event.find({ eventId: eventId });
+  const event = await Event.findOne({ eventId: eventId });
   if (!event) {
     return next(new AppError("Event Does Not Exist", 404));
   }
@@ -36,11 +17,11 @@ exports.registerForEvent = asyncHandler(async (req, res, next) => {
     return next(new AppError("Participant Does Not Exist", 404));
   }
 
-  event.participants.push(participantId);
-  event.save();
+  event.participants.push(participant._id);
+  await event.save();
 
-  participant.events.push(eventId);
-  participant.save();
+  participant.events.push(event._id);
+  await participant.save();
 
   res.status(201).json({
     status: "success",
@@ -49,48 +30,56 @@ exports.registerForEvent = asyncHandler(async (req, res, next) => {
 });
 
 exports.createTeamForEvent = asyncHandler(async (req, res, next) => {
-  const { eventId } = req.body;
-  const event = await Event.find({ eventId: eventId });
+  const { eventId, participantId, teamName, college } = req.body;
+  const event = await Event.findOne({ eventId: eventId });
   if (!event) {
     return next(new AppError("Event Does Not Exist", 404));
   }
 
-  const { teamName, college, participantId } = req.body;
-  const teamId = uuid();
-  event.teams.push({
-    teamId: teamId,
+  const participant = await User.findById(participantId);
+  if (!participant) {
+    return next(new AppError("Participant Does Not Exist", 404));
+  }
+
+  const team = await Team.create({
+    eventId: eventId,
     teamName: teamName,
     college: college,
-    participants: [participantId],
+    leader: participant._id,
   });
+
+  event.teams.push(team._id);
   await event.save();
 
   res.status(201).json({
     status: "success",
     message: "Registration Successful",
     eventId,
-    teamId,
+    teamId: team._id.toString(),
   });
 });
 
 exports.joinTeamForEvent = asyncHandler(async (req, res, next) => {
   const { eventId, teamId, participantId, college } = req.body;
 
-  const event = await Event.find({ eventId: eventId });
+  const event = await Event.findOne({ eventId: eventId });
   if (!event) {
     return next(new AppError("Event Does Not Exist", 404));
   }
 
-  var flag = -1;
-  event.teams.every((team) => {
-    if (team.teamId == teamId && team.college == college) {
-      flag = 0;
-      team.participants.push(participantId);
-      return false;
-    }
-  });
+  const participant = await User.findById(participantId);
+  if (!participant) {
+    return next(new AppError("Participant Does Not Exist", 404));
+  }
 
-  await event.save();
+  var flag = -1;
+  const team = await Team.findById(teamId);
+  if (team && team.college == college) {
+    flag = 0;
+    team.participants.push(participant._id);
+  }
+
+  await team.save();
 
   if (flag == 0) {
     res.status(200).json({
@@ -107,7 +96,7 @@ exports.joinTeamForEvent = asyncHandler(async (req, res, next) => {
 
 exports.createEvent = asyncHandler(async (req, res, next) => {
   const event = await Event.create(req.body);
-  
+
   res.status(201).json({
     status: "success",
     data: event,
@@ -169,7 +158,7 @@ exports.deleteEvent = asyncHandler(async (req, res, next) => {
 });
 
 exports.getEventParticipants = asyncHandler(async (req, res, next) => {
-  const event = await Event.find({ eventId: req.params.id });
+  const event = await Event.findOne({ eventId: req.params.id });
 
   if (!event) {
     return next(new AppError("Event Does Not Exist", 404));

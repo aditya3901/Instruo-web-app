@@ -18,10 +18,10 @@ const eventSchema = new mongoose.Schema({
   type: {
     type: String,
     enum: {
-      values: ["team", "individual"],
+      values: ["Team", "Individual"],
       message: "Not a valid type",
     },
-    default: "individual",
+    default: "Individual",
   },
   desc: {
     type: String,
@@ -46,6 +46,7 @@ const eventSchema = new mongoose.Schema({
   schedule: [
     {
       title: String,
+      desc: String,
       date: Date,
       time: String,
       duration: String,
@@ -57,6 +58,7 @@ const eventSchema = new mongoose.Schema({
       name: String,
       phone: String,
       email: String,
+      photo: String,
     },
   ],
   rules: [String],
@@ -66,28 +68,18 @@ const eventSchema = new mongoose.Schema({
       answer: String,
     },
   ],
-  // participants: [
-  //   {
-  //     type: mongoose.Schema.ObjectId,
-  //     ref: "User",
-  //   },
-  // ],
-  // teams: [
-  //   {
-  //     teamId: {
-  //       type: String,
-  //       unique: true,
-  //     },
-  //     teamName: String,
-  //     college: String,
-  //     participants: [
-  //       {
-  //         type: mongoose.Schema.ObjectId,
-  //         ref: "User",
-  //       },
-  //     ],
-  //   },
-  // ],
+  participants: [
+    {
+      type: mongoose.Schema.ObjectId,
+      ref: "User",
+    },
+  ],
+  teams: [
+    {
+      type: mongoose.Schema.ObjectId,
+      ref: "Team",
+    },
+  ],
 });
 
 eventSchema.pre("save", function (next) {
@@ -95,21 +87,21 @@ eventSchema.pre("save", function (next) {
   next();
 });
 
-// eventSchema.pre(/^find/, function (next) {
-//   this.populate({
-//     path: "participants",
-//     select:
-//       "-__v -events -passwordChangedAt -passwordResetToken -passwordResetExpired",
-//   });
+eventSchema.pre(/^find/, function (next) {
+  this.populate({
+    path: "participants",
+    select:
+      "-__v -events -passwordChangedAt -passwordResetToken -passwordResetExpired",
+  });
 
-//   this.populate({
-//     path: "teams.participants",
-//     select:
-//       "-__v -events -passwordChangedAt -passwordResetToken -passwordResetExpired",
-//   });
+  this.populate({
+    path: "teams",
+    select:
+      "-__v",
+  });
 
-//   next();
-// });
+  next();
+});
 
 const Event = mongoose.model("Event", eventSchema);
 

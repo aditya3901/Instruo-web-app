@@ -31,6 +31,7 @@ const workshopSchema = new mongoose.Schema({
   schedule: [
     {
       title: String,
+      desc: String,
       date: Date,
       time: String,
       duration: String,
@@ -42,6 +43,7 @@ const workshopSchema = new mongoose.Schema({
       name: String,
       phone: String,
       email: String,
+      photo: String,
     },
   ],
   rules: [String],
