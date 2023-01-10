@@ -41,6 +41,9 @@ exports.createTeamForEvent = asyncHandler(async (req, res, next) => {
     return next(new AppError("Participant Does Not Exist", 404));
   }
 
+  participant.events.push(event._id);
+  await participant.save();
+
   const team = await Team.create({
     eventId: eventId,
     teamName: teamName,
@@ -77,6 +80,9 @@ exports.joinTeamForEvent = asyncHandler(async (req, res, next) => {
   if (team && team.college == college) {
     flag = 0;
     team.participants.push(participant._id);
+
+    participant.events.push(event._id);
+    await participant.save();
   }
 
   await team.save();
@@ -96,6 +102,10 @@ exports.joinTeamForEvent = asyncHandler(async (req, res, next) => {
 
 exports.createEvent = asyncHandler(async (req, res, next) => {
   const event = await Event.create(req.body);
+
+  const count = await Event.countDocuments();
+  event.eventId = `${count}`;
+  await event.save();
 
   res.status(201).json({
     status: "success",
@@ -119,9 +129,24 @@ exports.getEventById = asyncHandler(async (req, res, next) => {
     return next(new AppError("Event Does Not Exist", 404));
   }
 
+  const { userId } = req.body;
+  const user = await User.findById(userId);
+  if (!user) {
+    return next(new AppError("User doesn't exist!", 404));
+  }
+
+  var isRegistered = false;
+  user.events.every((item) => {
+    if (item == event._id.toString()) {
+      isRegistered = true;
+      return false;
+    }
+  });
+
   res.status(200).json({
     status: "success",
     data: {
+      isRegistered,
       event,
     },
   });

@@ -8,7 +8,6 @@ const eventSchema = new mongoose.Schema({
   },
   eventId: {
     type: String,
-    unique: true,
   },
   subtitle: String,
   category: {
@@ -82,11 +81,6 @@ const eventSchema = new mongoose.Schema({
   ],
 });
 
-eventSchema.pre("save", function (next) {
-  this.eventId = slugify(this.title, { lower: true });
-  next();
-});
-
 eventSchema.pre(/^find/, function (next) {
   this.populate({
     path: "participants",
@@ -96,8 +90,7 @@ eventSchema.pre(/^find/, function (next) {
 
   this.populate({
     path: "teams",
-    select:
-      "-__v",
+    select: "-__v",
   });
 
   next();
