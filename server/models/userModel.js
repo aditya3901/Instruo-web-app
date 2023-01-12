@@ -47,8 +47,14 @@ const userSchema = new mongoose.Schema({
   },
   events: [
     {
-      type: mongoose.Schema.ObjectId,
-      ref: "Event",
+      eventId: {
+        type: mongoose.Schema.ObjectId,
+        ref: "Event",
+      },
+      teamId: {
+        type: mongoose.Schema.ObjectId,
+        ref: "Team",
+      },
     },
   ],
   passwordChangedAt: Date,

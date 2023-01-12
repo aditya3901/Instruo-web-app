@@ -1,5 +1,4 @@
 const mongoose = require("mongoose");
-const slugify = require("slugify");
 
 const eventSchema = new mongoose.Schema({
   title: {
@@ -79,21 +78,6 @@ const eventSchema = new mongoose.Schema({
       ref: "Team",
     },
   ],
-});
-
-eventSchema.pre(/^find/, function (next) {
-  this.populate({
-    path: "participants",
-    select:
-      "-__v -events -passwordChangedAt -passwordResetToken -passwordResetExpired",
-  });
-
-  this.populate({
-    path: "teams",
-    select: "-__v",
-  });
-
-  next();
 });
 
 const Event = mongoose.model("Event", eventSchema);

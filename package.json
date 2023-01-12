@@ -23,7 +23,6 @@
     "nodemailer": "^6.8.0",
     "nodemon": "^2.0.20",
     "pug": "^3.0.2",
-    "slugify": "^1.6.5",
     "uuidv4": "^6.2.13",
     "validator": "^13.7.0"
   },

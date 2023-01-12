@@ -17,5 +17,6 @@ router.post("/create", eventController.createEvent);
 router.patch("/update/:id", eventController.updateEvent);
 router.delete("/delete/:id", eventController.deleteEvent);
 router.get("/:id/participants", eventController.getEventParticipants);
+router.get("/:id/teams", eventController.getEventTeams);
 
 module.exports = router;

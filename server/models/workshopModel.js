@@ -1,5 +1,4 @@
 const mongoose = require("mongoose");
-const slugify = require("slugify");
 
 const workshopSchema = new mongoose.Schema({
   title: {
@@ -65,11 +64,6 @@ const workshopSchema = new mongoose.Schema({
       },
     },
   ],
-});
-
-workshopSchema.pre("save", function (next) {
-  this.workshopId = slugify(this.title, { lower: true });
-  next();
 });
 
 const Workshop = mongoose.model("Workshop", workshopSchema);

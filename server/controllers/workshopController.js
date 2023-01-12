@@ -5,6 +5,10 @@ const Workshop = require("../models/workshopModel");
 exports.createWorkshop = asyncHandler(async (req, res, next) => {
   const workshop = await Workshop.create(req.body);
 
+  const count = await Workshop.countDocuments();
+  workshop.workshopId = `${count}`;
+  await workshop.save();
+
   res.status(200).json({
     status: "success",
     workshop,
