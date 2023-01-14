@@ -76,7 +76,7 @@ exports.joinTeamForEvent = asyncHandler(async (req, res, next) => {
 
   var flag = -1;
   const team = await Team.findById(teamId);
-  if (team && team.college == college) {
+  if (team) {
     flag = 0;
     team.participants.push(participant._id);
 
@@ -131,7 +131,12 @@ exports.getEventById = asyncHandler(async (req, res, next) => {
   const { userId } = req.body;
   const user = await User.findById(userId);
   if (!user) {
-    return next(new AppError("User doesn't exist!", 404));
+    res.status(200).json({
+      status: "success",
+      data: {
+        event,
+      },
+    });
   }
 
   var isRegistered = false;

@@ -14,7 +14,6 @@ const userSchema = new mongoose.Schema({
     required: [true, "Please provide your email"],
     validate: [validator.isEmail, "Please provide a valid email"],
   },
-  photo: String,
   mobile: {
     type: Number,
     required: [true, "Please provide your contact number"],
@@ -37,12 +36,12 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: [true, "Please tell us your college name"],
   },
-  dept: {
+  course: {
     type: String,
-    required: [true, "Please enter your department"],
+    required: [true, "Please enter your course name"],
   },
-  academic_year: {
-    type: Number,
+  graduation_year: {
+    type: String,
     required: [true, "Enter your year"],
   },
   events: [

@@ -55,8 +55,40 @@ exports.login = asyncHandler(async (req, res, next) => {
     return next(new AppError("Incorrect email or password", 401));
   }
 
+  await user.populate({
+    path: "events.eventId",
+    select: "-participants -teams",
+  });
+
+  await user.populate({
+    path: "events.teamId",
+  });
+
   // Send token to client
   createSendToken(user, 200, res);
+});
+
+exports.getUserById = asyncHandler(async (req, res, next) => {
+  const { id } = req.body;
+  const user = await User.findById(id);
+
+  if (!user) {
+    return next(new AppError("User doesn't exist!", 404));
+  }
+
+  await user.populate({
+    path: "events.eventId",
+    select: "-participants -teams",
+  });
+
+  await user.populate({
+    path: "events.teamId",
+  });
+
+  res.status(200).json({
+    status: "success",
+    user,
+  });
 });
 
 exports.protect = asyncHandler(async (req, res, next) => {
