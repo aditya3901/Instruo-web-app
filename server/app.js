@@ -12,10 +12,12 @@ const globalErrorHandler = require("./controllers/errorController");
 const app = express();
 
 app.use((req, res, next) => {
-  res.setHeader("Access-Control-Allow-Origin", "*");
-  res.setHeader("Access-Control-Allow-Headers", "*");
-  res.setHeader("Access-Control-Allow-Methods", "*");
-  res.header("Access-Control-Allow-Credentials", true);
+  res.header(
+    "Access-Control-Allow-Origin: https://instruo-server.onrender.com/"
+  );
+  res.header("Access-Control-Allow-Headers: Content-Type, *");
+  res.header("Access-Control-Allow-Methods: GET, POST, PATCH, DELETE");
+  res.header("Access-Control-Allow-Credentials: true");
   next();
 });
 
