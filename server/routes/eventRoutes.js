@@ -5,7 +5,7 @@ const authController = require("../controllers/authController");
 const router = express.Router();
 
 router.get("/", eventController.getAllEvents);
-router.get("/:id", eventController.getEventById);
+router.post("/:id", eventController.getEventById);
 
 router.use(authController.protect);
 router.post("/register", eventController.registerForEvent);
