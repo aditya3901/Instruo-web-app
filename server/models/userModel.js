@@ -8,6 +8,7 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: [true, "Please tell us your name"],
   },
+  photo: String,
   email: {
     type: String,
     unique: true,

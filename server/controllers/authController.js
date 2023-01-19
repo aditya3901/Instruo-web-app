@@ -1,5 +1,8 @@
 const { promisify } = require("util");
 const jwt = require("jsonwebtoken");
+const multer = require("multer");
+const path = require("path");
+const cloudinary = require("cloudinary").v2;
 const asyncHandler = require("express-async-handler");
 const AppError = require("../utils/appError");
 const User = require("../models/userModel");
@@ -32,6 +35,20 @@ const createSendToken = (user, statusCode, res) => {
     });
 };
 
+const upload = multer({
+  storage: multer.diskStorage({}),
+  fileFilter: (req, file, cb) => {
+    let ext = path.extname(file.originalname);
+    if (ext !== ".jpg" && ext !== ".jpeg" && ext !== ".png") {
+      cb(new Error("Unsupported file type!"), false);
+      return;
+    }
+    cb(null, true);
+  },
+});
+
+exports.uploadImage = upload.single("image");
+
 exports.signup = asyncHandler(async (req, res, next) => {
   const { email } = req.body;
 
@@ -40,7 +57,16 @@ exports.signup = asyncHandler(async (req, res, next) => {
     return next(new AppError("User already exist", 400));
   }
 
+  cloudinary.config({
+    cloud_name: process.env.CLOUD_NAME,
+    api_key: process.env.API_KEY,
+    api_secret: process.env.API_SECRET,
+  });
+  const result = await cloudinary.uploader.upload(req.file.path);
+
   const user = await User.create(req.body);
+  user.photo = result.secure_url;
+  await user.save();
 
   createSendToken(user, 201, res);
 });
