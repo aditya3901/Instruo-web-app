@@ -236,3 +236,22 @@ exports.getEventTeams = asyncHandler(async (req, res, next) => {
     },
   });
 });
+
+// exports.populateEvent = asyncHandler(async (req, res, next) => {
+//   const event = await Event.findOne({title: req.params.event});
+//   if (!event) {
+//       return next(new AppError("Event Does Not Exist", 404));
+//   }
+
+//   req.event = event;
+//   next();
+// });
+
+// exports.restrictTo = 
+//   (...types) => 
+//   (req, res, next) => {
+//     if (types.includes(req.event.type)) return next();
+//     return next(
+//       new AppError("You don't have permission to perform this action.", 403)
+//     );
+// };

@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 
 const teamSchema = new mongoose.Schema({
-  eventId: {
+  eventTitle: {
     required: true,
     type: String,
   },
@@ -14,6 +14,10 @@ const teamSchema = new mongoose.Schema({
   round: {
     type: String,
     default: "1",
+  },
+  members: {
+    type: Number,
+    default: 1,
   },
   participants: [
     {
