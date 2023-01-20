@@ -21,6 +21,10 @@ const eventSchema = new mongoose.Schema({
     },
     default: "Individual",
   },
+  maxMembers: {
+    type: Number,
+    default: 1,
+  },
   desc: {
     type: String,
     required: true,

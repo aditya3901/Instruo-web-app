@@ -77,8 +77,13 @@ exports.joinTeamForEvent = asyncHandler(async (req, res, next) => {
   var flag = -1;
   const team = await Team.findById(teamId);
   if (team) {
+    if (team.members >= event.maxMembers) {
+      return next(new AppError("Team Has No Vacancy.", 400));
+    }
+
     flag = 0;
     team.participants.push(participant._id);
+    team.members = team.members + 1;
 
     participant.events.push({ eventId: event._id, teamId: team._id });
     await participant.save();
