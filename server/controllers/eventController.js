@@ -62,7 +62,7 @@ exports.createTeamForEvent = asyncHandler(async (req, res, next) => {
 });
 
 exports.joinTeamForEvent = asyncHandler(async (req, res, next) => {
-  const { eventId, teamId, participantId, college } = req.body;
+  const { eventId, teamId, participantId } = req.body;
 
   const event = await Event.findOne({ eventId: eventId });
   if (!event) {
@@ -148,8 +148,8 @@ exports.getEventById = asyncHandler(async (req, res, next) => {
   var teamId;
   var team = {};
 
-  user.events.every((item) => {
-    if (item.eventId == event._id.toString()) {
+  user.events.forEach((item) => {
+    if (item.eventId.toString() == event._id.toString()) {
       isRegistered = true;
       if (item.teamId) {
         teamId = item.teamId;

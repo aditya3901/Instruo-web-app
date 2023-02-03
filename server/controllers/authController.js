@@ -21,18 +21,17 @@ const createSendToken = (user, statusCode, res) => {
   // Don't show user password in res
   user.password = undefined;
 
-  res
-    .cookie("access_token", token, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-    })
-    .status(statusCode)
-    .json({
-      status: "success",
-      data: {
-        user,
-      },
-    });
+  // .cookie("access_token", token, {
+  //   httpOnly: true,
+  //   secure: process.env.NODE_ENV === "production",
+  // })
+  res.status(statusCode).json({
+    status: "success",
+    data: {
+      user,
+      token,
+    },
+  });
 };
 
 const upload = multer({
@@ -118,7 +117,13 @@ exports.getUserById = asyncHandler(async (req, res, next) => {
 });
 
 exports.protect = asyncHandler(async (req, res, next) => {
-  const token = req.cookies.access_token;
+  var token;
+  if (
+    req.headers.authorization &&
+    req.headers.authorization.startsWith("Bearer")
+  ) {
+    token = req.headers.authorization.split(" ")[1];
+  }
 
   if (!token) {
     return next(
@@ -147,13 +152,6 @@ exports.protect = asyncHandler(async (req, res, next) => {
   // Grant Access To Protected Route
   req.user = user;
   next();
-});
-
-exports.logout = asyncHandler(async (req, res, next) => {
-  res.clearCookie("access_token").status(200).json({
-    status: "success",
-    message: "Logged out successfully",
-  });
 });
 
 exports.restrictTo =
