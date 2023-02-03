@@ -1,22 +1,17 @@
-const express = require("express");
-const morgan = require("morgan");
-const cookieParser = require("cookie-parser");
-const cors = require("cors");
+const express = require("express")
+const morgan = require("morgan")
+const cookieParser = require("cookie-parser")
+const cors = require("cors")
 
-const app = express();
-app.use(
-  cors({
-    origin: "http://localhost:5173",
-    credentials: true,
-  })
-);
+const app = express()
+app.use(cors())
 
-const userRouter = require("./routes/userRoutes");
-const eventRouter = require("./routes/eventRoutes");
-const workshopRouter = require("./routes/workshopRoutes");
-const notifRouter = require("./routes/notifRoutes");
-const AppError = require("./utils/appError");
-const globalErrorHandler = require("./controllers/errorController");
+const userRouter = require("./routes/userRoutes")
+const eventRouter = require("./routes/eventRoutes")
+const workshopRouter = require("./routes/workshopRoutes")
+const notifRouter = require("./routes/notifRoutes")
+const AppError = require("./utils/appError")
+const globalErrorHandler = require("./controllers/errorController")
 
 // app.use((req, res, next) => {
 //   res.header(
@@ -34,21 +29,21 @@ const globalErrorHandler = require("./controllers/errorController");
 
 // Development Logging
 if (process.env.NODE_ENV === "development") {
-  app.use(morgan("dev"));
+	app.use(morgan("dev"))
 }
-app.use(express.json());
-app.use(cookieParser());
+app.use(express.json())
+app.use(cookieParser())
 
 // Routes
-app.use("/api/v1/users", userRouter);
-app.use("/api/v1/events", eventRouter);
-app.use("/api/v1/workshops", workshopRouter);
-app.use("/api/v1/notif", notifRouter);
+app.use("/api/v1/users", userRouter)
+app.use("/api/v1/events", eventRouter)
+app.use("/api/v1/workshops", workshopRouter)
+app.use("/api/v1/notif", notifRouter)
 
 app.all("*", (req, res, next) => {
-  next(new AppError(`Can't find ${req.originalUrl} on this server!`, 404));
-});
+	next(new AppError(`Can't find ${req.originalUrl} on this server!`, 404))
+})
 
-app.use(globalErrorHandler);
+app.use(globalErrorHandler)
 
-module.exports = app;
+module.exports = app
