@@ -9,7 +9,6 @@ const notifSchema = new mongoose.Schema({
   },
   created_at: Date,
   eventId: String,
-  target_user_id: String,
 });
 
 const Notification = mongoose.model("Notif", notifSchema);

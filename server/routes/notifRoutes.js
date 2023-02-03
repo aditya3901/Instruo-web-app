@@ -4,6 +4,6 @@ const notifController = require("../controllers/notif_controller");
 const router = express.Router();
 
 router.post("/create", notifController.createNotif);
-router.get("/:id", notifController.getMyNotifs);
+router.get("/", notifController.getNotifs);
 
 module.exports = router;

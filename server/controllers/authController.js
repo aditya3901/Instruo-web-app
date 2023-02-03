@@ -154,13 +154,6 @@ exports.protect = asyncHandler(async (req, res, next) => {
   next();
 });
 
-exports.logout = asyncHandler(async (req, res, next) => {
-  res.clearCookie("access_token").status(200).json({
-    status: "success",
-    message: "Logged out successfully",
-  });
-});
-
 exports.restrictTo =
   (...roles) =>
   (req, res, next) => {

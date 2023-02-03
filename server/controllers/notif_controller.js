@@ -10,10 +10,8 @@ exports.createNotif = asyncHandler(async (req, res, next) => {
   });
 });
 
-exports.getMyNotifs = asyncHandler(async (req, res, next) => {
-  const { id } = req.params.id;
-
-  const notifs = await Notification.find({ target_user_id: id.toString() });
+exports.getNotifs = asyncHandler(async (req, res, next) => {
+  const notifs = await Notification.find({});
 
   res.status(200).json({
     status: "success",
