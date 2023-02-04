@@ -18,6 +18,7 @@ const userSchema = new mongoose.Schema({
   mobile: {
     type: Number,
     required: [true, "Please provide your contact number"],
+    unique: true,
   },
   role: {
     type: String,
@@ -55,6 +56,12 @@ const userSchema = new mongoose.Schema({
         type: mongoose.Schema.ObjectId,
         ref: "Team",
       },
+    },
+  ],
+  workshops: [
+    {
+      type: mongoose.Schema.ObjectId,
+      ref: "Workshop",
     },
   ],
   passwordChangedAt: Date,

@@ -4,8 +4,8 @@ const workshopController = require("../controllers/workshopController");
 const router = express.Router();
 
 router.post("/create", workshopController.createWorkshop);
-
 router.get("/", workshopController.getAllWorkshops);
+router.post("/register", workshopController.register);
 router.get("/:id", workshopController.getWorkshopById);
 
 module.exports = router;
