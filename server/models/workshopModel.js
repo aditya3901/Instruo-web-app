@@ -35,6 +35,7 @@ const workshopSchema = new mongoose.Schema({
 			time: String,
 			duration: String,
 			venue: String,
+			locUrl: String,
 		},
 	],
 	contacts: [
@@ -70,6 +71,7 @@ const workshopSchema = new mongoose.Schema({
 			ref: "User",
 		},
 	],
+	registration_amount: String,
 })
 
 const Workshop = mongoose.model("Workshop", workshopSchema)
