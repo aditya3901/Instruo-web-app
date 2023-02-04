@@ -1,22 +1,23 @@
-const express = require("express");
-const authController = require("../controllers/authController");
+const express = require("express")
+const authController = require("../controllers/authController")
 
-const router = express.Router();
+const router = express.Router()
 
-router.post("/signup", authController.uploadImage, authController.signup);
-router.post("/login", authController.login);
-router.post("/forgotPassword", authController.forgotPassword);
-router.patch("/resetPassword/:token", authController.resetPassword);
-router.post("/", authController.protect, authController.getUserById);
+// router.post("/signup", authController.uploadImage, authController.signup);
+router.post("/signup", authController.signup)
+router.post("/login", authController.login)
+router.post("/forgotPassword", authController.forgotPassword)
+router.patch("/resetPassword/:token", authController.resetPassword)
+router.post("/", authController.protect, authController.getUserById)
 
 // Protect all routes after this middleware
-router.use(authController.protect);
+router.use(authController.protect)
 
 // user actions here, eg: update details, delete account, etc
 
 // Restrict all routes after this middleware to only Admins
-router.use(authController.restrictTo("admin"));
+router.use(authController.restrictTo("admin"))
 
 // admin actions here, eg: get user/users, update user details, delete user, etc
 
-module.exports = router;
+module.exports = router
