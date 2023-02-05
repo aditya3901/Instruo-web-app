@@ -15,6 +15,10 @@ const teamSchema = new mongoose.Schema({
     type: String,
     default: "1",
   },
+  members: {
+    type: Number,
+    default: 1,
+  },
   participants: [
     {
       type: mongoose.Schema.ObjectId,

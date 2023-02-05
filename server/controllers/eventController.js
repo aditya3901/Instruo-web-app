@@ -82,7 +82,7 @@ exports.joinTeamForEvent = asyncHandler(async (req, res, next) => {
 			event.teams.forEach(async (id) => {
 				if (id == teamId) {
 					flag = 0
-	
+          
 					team.participants.push(participant._id)
 					participant.events.push({
 						eventId: event._id,
