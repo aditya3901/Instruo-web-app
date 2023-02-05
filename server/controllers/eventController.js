@@ -77,19 +77,22 @@ exports.joinTeamForEvent = asyncHandler(async (req, res, next) => {
 	var flag = -1
 	const team = await Team.findById(teamId)
 	if (team) {
-		event.teams.forEach(async (id) => {
-			if (id == teamId) {
-				flag = 0
-
-				team.participants.push(participant._id)
-				participant.events.push({
-					eventId: event._id,
-					teamId: team._id,
-				})
-				await participant.save()
-				return false
-			}
-		})
+		var curLen = team.participants.length + 1;
+		if(curLen < event.maxTeamSize) {
+			event.teams.forEach(async (id) => {
+				if (id == teamId) {
+					flag = 0
+	
+					team.participants.push(participant._id)
+					participant.events.push({
+						eventId: event._id,
+						teamId: team._id,
+					})
+					await participant.save()
+					return false
+				}
+			})
+		}
 	}
 
 	await team.save()

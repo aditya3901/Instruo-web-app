@@ -80,6 +80,7 @@ const eventSchema = new mongoose.Schema({
 			ref: "Team",
 		},
 	],
+	maxTeamSize: Number,
 })
 
 const Event = mongoose.model("Event", eventSchema)
