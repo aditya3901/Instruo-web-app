@@ -110,6 +110,11 @@ exports.getUserById = asyncHandler(async (req, res, next) => {
 		path: "events.teamId",
 	})
 
+	await user.populate({
+		path: "workshops",
+		select: "-participants"
+	})
+
 	res.status(200).json({
 		status: "success",
 		user,
