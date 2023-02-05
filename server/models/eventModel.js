@@ -21,10 +21,6 @@ const eventSchema = new mongoose.Schema({
 		},
 		default: "Individual",
 	},
-  maxMembers: {
-    type: Number,
-    default: 1,
-  },
 	desc: {
 		type: String,
 		required: true,
@@ -84,6 +80,7 @@ const eventSchema = new mongoose.Schema({
 			ref: "Team",
 		},
 	],
+	maxTeamSize: Number,
 })
 
 const Event = mongoose.model("Event", eventSchema)
