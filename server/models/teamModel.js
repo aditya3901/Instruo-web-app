@@ -15,6 +15,10 @@ const teamSchema = new mongoose.Schema({
     type: String,
     default: "1",
   },
+  isPaid: {
+    type: Boolean,
+    default: false,
+  },
   participants: [
     {
       type: mongoose.Schema.ObjectId,

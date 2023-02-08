@@ -20,6 +20,8 @@ router.post(
   authController.protect,
   eventController.joinTeamForEvent
 );
+router.get("/:eventId/team/:teamId/pay", eventController.teamPay);
+router.get("/:eventId/participant/:participantId/pay", eventController.participantPay);
 
 // router.use(authController.restrictTo("admin"));
 router.post(

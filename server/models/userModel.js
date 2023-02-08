@@ -58,6 +58,12 @@ const userSchema = new mongoose.Schema({
       },
     },
   ],
+  paid_events: [
+    {
+      type: mongoose.Schema.ObjectId,
+      ref: "Event",
+    },
+  ],
   workshops: [
     {
       type: mongoose.Schema.ObjectId,
