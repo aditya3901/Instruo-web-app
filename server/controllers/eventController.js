@@ -265,7 +265,7 @@ exports.getEventParticipants = asyncHandler(async (req, res, next) => {
   await event.populate({
     path: "participants",
     select:
-      "-__v -events -passwordChangedAt -passwordResetToken -passwordResetExpired",
+      "-__v -events -paid_events -workshops -passwordChangedAt -passwordResetToken -passwordResetExpired",
   });
 
   res.status(201).json({
